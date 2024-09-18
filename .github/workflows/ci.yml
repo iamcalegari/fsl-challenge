@@ -1,0 +1,38 @@
+name: CI Pipeline
+
+on:
+  pull_request:
+    branches:
+      - devel
+      - stage
+      - prod
+
+jobs:
+  pr_pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout to branch
+        uses: actions/checkout@v3
+
+      - name: Setup NODE
+        uses: actions/setup-node@v3
+        with:
+          node-version: 15
+
+      - name: Installing npm dependencies
+        run: |
+          npm i
+          npm i -g prettier
+
+      - name: Linter (ESLint)
+        run: npm run lint
+
+      - name: Formatter (Prettier)
+        run: npm run prettier
+
+      - name: Test (Jest)
+        run: CI=true npm run test
+
+      - name: Build
+        run: npm run build
